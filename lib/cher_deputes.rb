@@ -45,7 +45,8 @@ def puts_deputy_on_array # méthode pour mettre les données sur les députés d
   page = Nokogiri::HTML(URI.open('http://www2.assemblee-nationale.fr/deputes/liste/tableau'))
   tab = page.css('//table/tbody/tr') # tab = site.css nokogiri pour scrapper le code html où sont stockées les données du tableau
   deputy_hash = tab.map {|x| {'first_name' => get_deputy_first_name(x), 'last_name' => get_deputy_last_name(x), 'email' => get_deputy_email(x) } }
-  # Prend les données du tableau, utilise ".map" pour créer un array avec ces données
+  # Prend les données du tableau, utilise ".map" pour créer un array avec ces données, paramètre "x" qui sert d'index, 
+  # crée des hash pour chaque députés et les met dans un array.
 end
 
 #juste un puts
