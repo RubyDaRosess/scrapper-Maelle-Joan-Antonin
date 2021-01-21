@@ -16,50 +16,42 @@ méthode = 1) on récupère les prénoms
           peut trouver plus simple
 
 1) et 2) https://www2.assemblee-nationale.fr/deputes/liste/alphabetique
+        http://www2.assemblee-nationale.fr/deputes/liste/tableau
 
 =end
 
 require "nokogiri"
 require "open-uri"
 
-
-#1) 2) 3) 4)
-def
-  pages = Nokogiri::HTML(URL.open("https://www2.assemblee-nationale.fr/deputes/liste/alphabetique"))
+def get_deputy_email(page)
+  deputy_href = page.css('td[1]/a/@href').text
+  deputy_url = Nokogiri::HTML(URI.open("http://www2.assemblee-nationale.fr#{deputy_href}"))
+  deputy_email = deputy_url.css('.deputes-liste-attributs > dd:nth-child(8) > ul:nth-child(1) > li:nth-child(2) > a:nth-child(1)').text
 end
-
-=begin
-On récupère les prénoms et noms et on les formate pour qu'ils sortent de la bonne manière.
-a = [
-  { 
-    "first_name" => "Jean",
-    "last_name" => "Durant",
-    "email" => "jean.durant@assemblée.fr"
-  },
-  { 
-    "first_name" => "Martin",
-    "last_name" => "Dupont",
-    "email" => "martin.dupont@assemblée.fr"
-  },
-=end
-def get_deputy_email(name)
-    deputy_href = (town_href = name["href"])
-    deputy_url = "https://www2.assemblee-nationale.fr/deputes/liste/alphabetique#{depute_href}"
-    deputy_email = deputy_url.css('.deputes-liste-attributs > dd:nth-child(8) > ul:nth-child(1) > li:nth-child(2) > a:nth-child(1)').text
-  end
   
-
-
-def get_deputy_complete_name(pages)
-  array_first_name=
-  array_last_name=
+def get_deputy_first_name(first_name)
+  first_name = first_name.css('td[1]/a').text.delete_prefix('Mme ').delete_prefix('M, ').split.first
 end
 
-def get_deputy_email(pages)
-
+def get_deputy_last_name(last_name)
+  last_name = last_name.css('td[1]/a').text.delete_prefix('Mme ').delete_prefix('M, ').split.last
 end
 
+def puts_deputy_on_array
+  page = Nokogiri::HTML(URI.open('http://www2.assemblee-nationale.fr/deputes/liste/tableau'))
+  tab = page.css('//table/tbody/tr')
+  deputy_hash = tab.map {|x| {'first_name' => get_deputy_first_name(x), 'last_name' => get_deputy_last_name(x), 'email' => get_deputy_email(x) } }
+end
 
-
-#5)
-
+begin
+    pp puts_deputy_on_array
+  rescue StandardError => e
+    puts 'You messed up in debuty'
+  end
+  begin
+    pp puts_deputy_on_array
+  rescue StandardError => e
+    puts e.message
+  else
+    puts 'Well Done!'
+  end
