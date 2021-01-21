@@ -16,9 +16,12 @@ def get_townhall_urls_and_emails(name)
     emails = town_url.xpath("/html/body/div/main/section[2]/div/table/tbody/tr[4]/td[2]").text
     # va chercher les emails des villes sur les differentes pages
 end
-get_townhall_urls_and_emails
 
-
+def emails_hashing
+    site = Nokogiri::HTML(URI.open('https://www.annuaire-des-mairies.com/val-d-oise.html'))
+    tables = site.css('[@class="lientxt"]')
+    tables.map {|name| {name.text => get_townhall_urls_and_emails(name)}}
+end
 
 # site = Nokogiri::HTML(URI.open("https://www.annuaire-des-mairies.com/val-d-oise.html"))
 # name = site.css('[@class="lientxt"]')
