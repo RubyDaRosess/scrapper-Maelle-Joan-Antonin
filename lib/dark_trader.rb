@@ -21,7 +21,7 @@ def crypto_scrap
   end
 
   puts crypto_arr
-  
+
 end
 
 crypto_scrap
